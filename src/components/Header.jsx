@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Search, Bell, User, ChevronDown, LogOut } from 'lucide-react';
+import { useState } from "react";
+import PropTypes from "prop-types";
+import { Search, Bell, User, ChevronDown, LogOut } from "lucide-react";
 
 const Header = ({ handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);

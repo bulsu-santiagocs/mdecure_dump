@@ -4,7 +4,7 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import Management from "./pages/Management";
-import Archived from "./pages/Archived"; // 1. Import the new component
+import Archived from "./pages/Archived";
 import Notification from "./pages/Notification";
 import PointOfSales from "./pages/PointOfSales";
 import Contacts from "./pages/Contacts";

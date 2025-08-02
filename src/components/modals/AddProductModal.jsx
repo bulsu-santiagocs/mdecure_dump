@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { supabase } from "../supabase/client";
+import { supabase } from "../../supabase/client";
 
 const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
   const [formData, setFormData] = useState({

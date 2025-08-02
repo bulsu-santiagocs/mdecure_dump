@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { supabase } from "../supabase/client";
+import { supabase } from "../../supabase/client";
 
 const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
   const [formData, setFormData] = useState(product);

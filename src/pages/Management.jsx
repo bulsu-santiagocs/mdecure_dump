@@ -11,9 +11,10 @@ import {
   Filter,
 } from "lucide-react";
 import { supabase } from "../supabase/client";
-import AddProductModal from "../components/AddProductModal";
-import EditProductModal from "../components/EditProductModal";
-import ViewProductModal from "../components/ViewProductModal";
+// Updated import paths for the modals
+import AddProductModal from "../components/modals/AddProductModal";
+import EditProductModal from "../components/modals/EditProductModal";
+import ViewProductModal from "../components/modals/ViewProductModal";
 
 const Management = () => {
   const [products, setProducts] = useState([]);
