@@ -9,7 +9,7 @@ import Notification from "./pages/Notification";
 import PointOfSales from "./pages/PointOfSales";
 import Contacts from "./pages/Contacts";
 import Settings from "./pages/Settings";
-import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/auth/LoginPage";
 import { supabase } from "./supabase/client";
 
 function App() {
@@ -73,8 +73,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/management" element={<Management />} />
-            <Route path="/archived" element={<Archived />} />{" "}
-            {/* 2. Add the new route */}
+            <Route path="/archived" element={<Archived />} />
             <Route path="/notification" element={<Notification />} />
             <Route path="/point-of-sales" element={<PointOfSales />} />
             <Route path="/contacts" element={<Contacts />} />
