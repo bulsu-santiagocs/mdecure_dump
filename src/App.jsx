@@ -10,8 +10,7 @@ import PointOfSales from "./pages/PointOfSales";
 import Contacts from "./pages/Contacts";
 import Settings from "./pages/Settings";
 import LoginPage from "./pages/auth/LoginPage";
-import { supabase } from "./supabase/client";
-
+import { supabase } from "@/supabase/client"; // Ensure this is using the alias too
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 

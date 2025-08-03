@@ -6,8 +6,25 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
   globalIgnores(['dist']),
+  
+  // This is the new section for Node.js config files
+  {
+    files: ['vite.config.js', 'eslint.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-undef': 'off', // Turn off no-undef for these files
+    },
+  },
+
+  // This is your existing section for React/JSX files
   {
     files: ['**/*.{js,jsx}'],
+    // Ignore config files from this rule
+    ignores: ['vite.config.js', 'eslint.config.js'],
     extends: [
       js.configs.recommended,
       reactHooks.configs['recommended-latest'],

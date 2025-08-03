@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { supabase } from "../../supabase/client";
-import logo from "../assets/images/logo-transparent.png";
+import { supabase } from "@/supabase/client";
+import logo from "@/assets/images/logo-transparent.png";
 
 const LoginPage = ({ onLogin }) => {
   const navigate = useNavigate();
@@ -42,7 +42,6 @@ const LoginPage = ({ onLogin }) => {
           {error && <p className="text-red-500 text-center mt-4">{error}</p>}
         </div>
 
-        {/* The form width is constrained here */}
         <form
           className="w-4/5 mx-auto space-y-8"
           onSubmit={(e) => {
@@ -50,6 +49,7 @@ const LoginPage = ({ onLogin }) => {
             handleLogin();
           }}
         >
+          {/* ... rest of your form ... */}
           <div className="relative">
             <label
               htmlFor="email-address"
