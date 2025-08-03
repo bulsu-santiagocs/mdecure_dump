@@ -33,7 +33,7 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`h-screen bg-gray-100 border-r border-gray-200 text-gray-800 transition-all duration-300 ease-in-out ${
+      className={`h-screen bg-white border-r border-gray-200 text-gray-800 transition-all duration-300 ease-in-out ${
         expanded ? "w-64" : "w-20"
       } shadow-lg`}
     >
@@ -41,7 +41,7 @@ const Sidebar = () => {
         {expanded && <Logo />}
         <button
           onClick={() => setExpanded((curr) => !curr)}
-          className="p-2 rounded-lg hover:bg-gray-300"
+          className="p-2 rounded-lg hover:bg-gray-200"
         >
           {expanded ? <ChevronsLeft /> : <Menu />}
         </button>
@@ -55,8 +55,8 @@ const Sidebar = () => {
                 to={item.path}
                 className={`w-full flex items-center p-3 rounded-lg transition-all duration-200 ${
                   location.pathname === item.path
-                    ? "bg-blue-600 text-white shadow-lg font-semibold"
-                    : "hover:bg-gray-200 text-gray-700"
+                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
+                    : "hover:bg-gray-100 text-gray-700"
                 }`}
               >
                 <span
@@ -68,7 +68,9 @@ const Sidebar = () => {
                 >
                   {item.icon}
                 </span>
-                {expanded && <span className="ml-3">{item.name}</span>}
+                {expanded && (
+                  <span className="ml-3 font-medium">{item.name}</span>
+                )}
               </Link>
             </li>
           ))}

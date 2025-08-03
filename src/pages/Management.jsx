@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Plus,
   Upload,
@@ -6,15 +6,15 @@ import {
   Eye,
   Pencil,
   Archive,
-  ChevronLeft,
-  ChevronRight,
   Filter,
 } from "lucide-react";
 import { supabase } from "../supabase/client";
-// Updated import paths for the modals
 import AddProductModal from "../components/modals/AddProductModal";
 import EditProductModal from "../components/modals/EditProductModal";
 import ViewProductModal from "../components/modals/ViewProductModal";
+import { useProductSearch } from "../hooks/useProductSearch";
+// Correct the import path to use the .jsx extension
+import { usePagination } from "../hooks/usePagination.jsx";
 
 const Management = () => {
   const [products, setProducts] = useState([]);
@@ -25,9 +25,14 @@ const Management = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const { searchTerm, setSearchTerm, searchedProducts } =
+    useProductSearch(products);
+  const {
+    paginatedData: paginatedProducts,
+    PaginationComponent,
+    ItemsPerPageComponent,
+  } = usePagination(searchedProducts);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -53,7 +58,7 @@ const Management = () => {
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedItems(filteredProducts.map((p) => p.id));
+      setSelectedItems(searchedProducts.map((p) => p.id));
     } else {
       setSelectedItems([]);
     }
@@ -80,47 +85,6 @@ const Management = () => {
           </span>
         );
     }
-  };
-
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) =>
-      Object.values(product).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [products, searchTerm]);
-
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredProducts, currentPage, itemsPerPage]);
-
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
-  const renderPagination = () => {
-    return (
-      <nav className="flex items-center space-x-2">
-        <button
-          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <span className="text-sm">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          <ChevronRight size={20} />
-        </button>
-      </nav>
-    );
   };
 
   if (loading) {
@@ -210,18 +174,7 @@ const Management = () => {
               <span>Filters</span>
             </button>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span>Show:</span>
-            <select
-              className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={itemsPerPage}
-              onChange={(e) => setItemsPerPage(Number(e.target.value))}
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
-          </div>
+          <ItemsPerPageComponent />
         </div>
 
         {/* Table Area */}
@@ -235,8 +188,8 @@ const Management = () => {
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     onChange={handleSelectAll}
                     checked={
-                      filteredProducts.length > 0 &&
-                      selectedItems.length === filteredProducts.length
+                      searchedProducts.length > 0 &&
+                      selectedItems.length === searchedProducts.length
                     }
                   />
                 </th>
@@ -344,7 +297,7 @@ const Management = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center mt-8">{renderPagination()}</div>
+        <PaginationComponent />
       </div>
     </>
   );
