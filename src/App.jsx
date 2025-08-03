@@ -10,14 +10,19 @@ import PointOfSales from "./pages/PointOfSales";
 import Contacts from "./pages/Contacts";
 import Settings from "./pages/Settings";
 import LoginPage from "./pages/auth/LoginPage";
-import { supabase } from "@/supabase/client"; // Ensure this is using the alias too
+import { supabase } from "@/supabase/client";
+import defaultLogo from "@/assets/images/logo-transparent.png";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); // Add state for user data
+  const [user, setUser] = useState(null);
+  const [branding, setBranding] = useState({
+    name: "MedCure",
+    url: defaultLogo,
+  });
 
-  // Function to fetch user data
-  const fetchUserData = async () => {
+  const fetchInitialData = async () => {
+    // Fetch user session
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -28,20 +33,28 @@ function App() {
       setIsLoggedIn(false);
       setUser(null);
     }
+
+    // Fetch branding info
+    const { data: brandingData, error: brandingError } = await supabase
+      .from("branding")
+      .select("name, logo_url")
+      .eq("id", 1)
+      .single();
+
+    if (brandingData) {
+      setBranding({ name: brandingData.name, url: brandingData.logo_url });
+    } else {
+      console.log("No branding data found, using defaults.");
+    }
   };
 
   useEffect(() => {
-    fetchUserData(); // Fetch data on initial load
+    fetchInitialData();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session) {
-          setIsLoggedIn(true);
-          setUser(session.user);
-        } else {
-          setIsLoggedIn(false);
-          setUser(null);
-        }
+      (_event, session) => {
+        setIsLoggedIn(!!session);
+        setUser(session?.user ?? null);
       }
     );
 
@@ -51,19 +64,13 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
-    fetchUserData(); // Fetch user data on login
+    fetchInitialData();
   };
 
   const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      setIsLoggedIn(false);
-      setUser(null);
-    } catch (error) {
-      alert(error.error_description || error.message);
-    }
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    setUser(null);
   };
 
   if (!isLoggedIn) {
@@ -77,9 +84,8 @@ function App() {
 
   return (
     <div className="flex h-screen bg-gray-200">
-      <Sidebar />
+      <Sidebar branding={branding} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Pass user data and handleLogout to Header */}
         <Header handleLogout={handleLogout} user={user} />
         <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-white to-gray-100">
           <Routes>
@@ -89,10 +95,9 @@ function App() {
             <Route path="/notification" element={<Notification />} />
             <Route path="/point-of-sales" element={<PointOfSales />} />
             <Route path="/contacts" element={<Contacts />} />
-            {/* Pass the fetchUserData function to Settings */}
             <Route
               path="/settings"
-              element={<Settings onUpdate={fetchUserData} />}
+              element={<Settings onUpdate={fetchInitialData} />}
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

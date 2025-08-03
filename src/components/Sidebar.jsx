@@ -12,8 +12,9 @@ import {
   Archive,
 } from "lucide-react";
 import Logo from "./Logo.jsx";
+import PropTypes from "prop-types";
 
-const Sidebar = () => {
+const Sidebar = ({ branding }) => {
   const [expanded, setExpanded] = useState(true);
   const location = useLocation();
 
@@ -38,7 +39,7 @@ const Sidebar = () => {
       }`}
     >
       <div className="flex items-center justify-between h-[69px] px-4">
-        {expanded && <Logo />}
+        {expanded && <Logo branding={branding} />}
         <button
           onClick={() => setExpanded((curr) => !curr)}
           className="p-2 rounded-lg hover:bg-gray-200"
@@ -82,6 +83,10 @@ const Sidebar = () => {
       </nav>
     </aside>
   );
+};
+
+Sidebar.propTypes = {
+  branding: PropTypes.object,
 };
 
 export default Sidebar;
