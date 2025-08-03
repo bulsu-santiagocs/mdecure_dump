@@ -123,9 +123,9 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Top Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {summaryCards.map((card, index) => (
+        {summaryCards.map((card) => (
           <div
-            key={index}
+            key={card.title}
             className="bg-white p-5 rounded-xl shadow-sm flex flex-col justify-between"
           >
             <div className="flex items-start justify-between">
@@ -134,12 +134,9 @@ const Dashboard = () => {
             <div className="mt-2">
               <p className="text-gray-500 text-sm">{card.title}</p>
               <p className="text-2xl font-bold text-gray-800">{card.value}</p>
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:underline mt-2 inline-block"
-              >
+              <button className="text-sm text-blue-600 hover:underline mt-2 inline-block">
                 Show Details
-              </a>
+              </button>
             </div>
           </div>
         ))}
@@ -231,19 +228,19 @@ const Dashboard = () => {
           <ul className="space-y-2 text-sm text-gray-600 mt-6">
             <li className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-indigo-600 mr-3"></span>
-              Total Purchase
+              <span>Total Purchase</span>
             </li>
             <li className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-green-500 mr-3"></span>
-              Cash Received
+              <span>Cash Received</span>
             </li>
             <li className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-yellow-500 mr-3"></span>
-              Bank Receive
+              <span>Bank Receive</span>
             </li>
             <li className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-red-500 mr-3"></span>
-              Total Service
+              <span>Total Service</span>
             </li>
           </ul>
         </div>
@@ -255,9 +252,9 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold text-gray-800">
             Point Of Sales
           </h2>
-          <a href="#" className="text-sm text-blue-600 hover:underline">
+          <button className="text-sm text-blue-600 hover:underline">
             See All &gt;
-          </a>
+          </button>
         </div>
         <div className="overflow-x-auto">
           <div className="min-w-full">
@@ -271,9 +268,9 @@ const Dashboard = () => {
             </div>
             {/* Table Body */}
             <div className="divide-y divide-gray-200">
-              {posData.map((item, index) => (
+              {posData.map((item) => (
                 <div
-                  key={index}
+                  key={item.medicineName + item.batchNo}
                   className="grid grid-cols-5 gap-4 py-4 items-center text-sm text-gray-800"
                 >
                   <div className="col-span-1 font-medium whitespace-pre-wrap">
