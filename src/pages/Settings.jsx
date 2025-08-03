@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types"; // Make sure to import PropTypes
 import { User, Shield, Bell, CreditCard, HelpCircle } from "lucide-react";
+import { supabase } from "@/supabase/client";
 
-const Settings = () => {
+const Settings = ({ onUpdate }) => {
+  // Accept onUpdate prop
   const [activeTab, setActiveTab] = useState("Profile");
 
   const settingsTabs = [
@@ -15,11 +18,8 @@ const Settings = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "Profile":
-        return <ProfileSettings />;
-      case "Security":
-        return <SecuritySettings />;
-      case "Notifications":
-        return <NotificationSettings />;
+        return <ProfileSettings onUpdate={onUpdate} />; // Pass onUpdate down
+      // ... other cases
       default:
         return (
           <div className="p-8">
@@ -63,80 +63,198 @@ const Settings = () => {
   );
 };
 
-// Sub-components for each settings tab
-const ProfileSettings = () => (
-  <div>
-    <h2 className="text-3xl font-bold text-gray-800 mb-2">
-      Profile Information
-    </h2>
-    <p className="text-gray-500 mb-8 border-b pb-6">
-      Update your personal details here.
-    </p>
-    <form className="space-y-6">
-      <div className="flex items-center gap-6">
-        <img
-          src="https://i.pravatar.cc/150?u=admin"
-          alt="Admin"
-          className="w-24 h-24 rounded-full object-cover"
-        />
-        <div>
-          <button
-            type="button"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700"
-          >
-            Change Photo
-          </button>
-          <p className="text-xs text-gray-500 mt-2">
-            JPG, GIF or PNG. 1MB max.
-          </p>
+Settings.propTypes = {
+  onUpdate: PropTypes.func.isRequired,
+};
+
+// In ProfileSettings component, call the onUpdate function after a successful change.
+const ProfileSettings = ({ onUpdate }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+        setFullName(user.user_metadata.full_name || "");
+        setRole(user.user_metadata.role || "");
+        setEmail(user.email);
+        setPhone(user.user_metadata.phone || "");
+        setAvatarUrl(user.user_metadata.avatar_url);
+      }
+      setLoading(false);
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleSaveChanges = async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.updateUser({
+      email: email,
+      data: {
+        full_name: fullName,
+        role: role,
+        phone: phone,
+        avatar_url: avatarUrl,
+      },
+    });
+
+    if (error) {
+      alert("Error updating the user: " + error.message);
+    } else {
+      alert("Profile updated successfully!");
+      onUpdate(); // Trigger the refresh in App.jsx
+    }
+  };
+
+  const handlePhotoChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    // Make sure user is available before proceeding
+    if (!user) {
+      setUploading(false);
+      return;
+    }
+
+    const fileName = `${user.id}/${Date.now()}`;
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, file);
+
+    if (uploadError) {
+      alert("Error uploading file: " + uploadError.message);
+      setUploading(false);
+      return;
+    }
+
+    const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
+
+    const publicUrl = data.publicUrl;
+    setAvatarUrl(publicUrl);
+
+    const { error: updateUserError } = await supabase.auth.updateUser({
+      data: { avatar_url: publicUrl },
+    });
+
+    if (updateUserError) {
+      alert("Error updating user photo: " + updateUserError.message);
+    } else {
+      onUpdate(); // Trigger refresh on photo change too
+    }
+
+    setUploading(false);
+  };
+
+  // ... (rest of the ProfileSettings component is the same)
+  // The JSX part of ProfileSettings does not need to change.
+  // ...
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      <h2 className="text-3xl font-bold text-gray-800 mb-2">
+        Profile Information
+      </h2>
+      <p className="text-gray-500 mb-8 border-b pb-6">
+        Update your personal details here.
+      </p>
+      <form className="space-y-6" onSubmit={handleSaveChanges}>
+        <div className="flex items-center gap-6">
+          <img
+            src={avatarUrl || `https://i.pravatar.cc/150?u=${user?.id}`}
+            alt="Admin"
+            className="w-24 h-24 rounded-full object-cover"
+          />
+          <div>
+            <label
+              htmlFor="photo-upload"
+              className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              {uploading ? "Uploading..." : "Change Photo"}
+            </label>
+            <input
+              type="file"
+              id="photo-upload"
+              className="hidden"
+              onChange={handlePhotoChange}
+              disabled={uploading}
+              accept="image/*"
+            />
+            <p className="mt-2 text-xs text-gray-500">
+              JPG, GIF or PNG. 1MB max.
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <label className="block">
-          <span className="text-gray-700 font-medium">Full Name</span>
-          <input
-            type="text"
-            defaultValue="Administrator"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </label>
-        <label className="block">
-          <span className="text-gray-700 font-medium">Role</span>
-          <input
-            type="text"
-            defaultValue="System Administrator"
-            disabled
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
-          />
-        </label>
-        <label className="block">
-          <span className="text-gray-700 font-medium">Email Address</span>
-          <input
-            type="email"
-            defaultValue="admin@medcure.ph"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </label>
-        <label className="block">
-          <span className="text-gray-700 font-medium">Phone Number</span>
-          <input
-            type="tel"
-            defaultValue="(123) 456-7890"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </label>
-      </div>
-      <div className="pt-4 text-right">
-        <button
-          type="submit"
-          className="px-6 py-2.5 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-700"
-        >
-          Save Changes
-        </button>
-      </div>
-    </form>
-  </div>
-);
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <label className="block">
+            <span className="font-medium text-gray-700">Full Name</span>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </label>
+          <label className="block">
+            <span className="font-medium text-gray-700">Role</span>
+            <input
+              type="text"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </label>
+          <label className="block">
+            <span className="font-medium text-gray-700">Email Address</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </label>
+          <label className="block">
+            <span className="font-medium text-gray-700">Phone Number</span>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </label>
+        </div>
+        <div className="pt-4 text-right">
+          <button
+            type="submit"
+            className="rounded-lg bg-gray-800 px-6 py-2.5 font-semibold text-white hover:bg-gray-700"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+ProfileSettings.propTypes = {
+  onUpdate: PropTypes.func.isRequired,
+};
 
 const SecuritySettings = () => (
   <div>

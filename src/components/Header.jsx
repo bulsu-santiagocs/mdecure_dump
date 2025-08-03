@@ -2,8 +2,12 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { Search, Bell, User, ChevronDown, LogOut } from "lucide-react";
 
-const Header = ({ handleLogout }) => {
+const Header = ({ handleLogout, user }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const displayName = user?.user_metadata?.full_name || "Administrator";
+  const displayEmail = user?.email || "medcure.ph";
+  const avatarUrl = user?.user_metadata?.avatar_url;
 
   return (
     <header className="sticky top-0 z-20 flex items-center h-[69px] bg-white border-b border-gray-200">
@@ -34,12 +38,20 @@ const Header = ({ handleLogout }) => {
               className="flex items-center space-x-3 cursor-pointer"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border-2 border-white shadow-sm">
-                <User className="w-6 h-6 text-gray-600" />
+              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={displayName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-6 h-6 text-gray-600" />
+                )}
               </div>
               <div className="text-sm hidden md:block">
-                <div className="font-semibold text-gray-800">Administrator</div>
-                <div className="text-xs text-gray-500">medcure.ph</div>
+                <div className="font-semibold text-gray-800">{displayName}</div>
+                <div className="text-xs text-gray-500">{displayEmail}</div>
               </div>
               <ChevronDown className="w-5 h-5 text-gray-400" />
             </button>
@@ -65,6 +77,7 @@ const Header = ({ handleLogout }) => {
 
 Header.propTypes = {
   handleLogout: PropTypes.func.isRequired,
+  user: PropTypes.object, // Add user prop type
 };
 
 export default Header;
