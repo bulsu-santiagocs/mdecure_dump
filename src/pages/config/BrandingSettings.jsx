@@ -105,7 +105,7 @@ const BrandingSettings = ({ onUpdate }) => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label className="block">
-            <span className="text-gray-700 font-medium">Application Name</span>
+            <span className="text-gray-700 font-medium">Brand Name</span>
             <input
               type="text"
               value={logoName}
