@@ -35,7 +35,7 @@ function App() {
     }
 
     // Fetch branding info
-    const { data: brandingData, error: brandingError } = await supabase
+    const { data: brandingData } = await supabase
       .from("branding")
       .select("name, logo_url")
       .eq("id", 1)
