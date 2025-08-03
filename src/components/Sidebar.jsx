@@ -33,9 +33,9 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`h-screen bg-white border-r border-gray-200 text-gray-800 transition-all duration-300 ease-in-out ${
+      className={`h-full bg-white border-r border-gray-200 text-gray-800 transition-all duration-300 ease-in-out ${
         expanded ? "w-64" : "w-20"
-      } shadow-lg`}
+      }`}
     >
       <div className="flex items-center justify-between h-[69px] px-4">
         {expanded && <Logo />}
@@ -53,14 +53,14 @@ const Sidebar = () => {
             <li key={item.name}>
               <Link
                 to={item.path}
-                className={`w-full flex items-center p-3 rounded-lg transition-all duration-200 ${
+                className={`group w-full flex items-center p-3 rounded-lg transition-all duration-200 ${
                   location.pathname === item.path
                     ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
                     : "hover:bg-gray-100 text-gray-700"
                 }`}
               >
                 <span
-                  className={`flex-shrink-0 ${
+                  className={`flex-shrink-0 transition-transform duration-200 ease-in-out group-hover:translate-x-1 ${
                     location.pathname === item.path
                       ? "text-white"
                       : "text-gray-600"
@@ -68,9 +68,13 @@ const Sidebar = () => {
                 >
                   {item.icon}
                 </span>
-                {expanded && (
-                  <span className="ml-3 font-medium">{item.name}</span>
-                )}
+                <span
+                  className={`overflow-hidden whitespace-nowrap transition-all duration-300 font-medium ${
+                    expanded ? "w-36 ml-3" : "w-0"
+                  }`}
+                >
+                  {item.name}
+                </span>
               </Link>
             </li>
           ))}
