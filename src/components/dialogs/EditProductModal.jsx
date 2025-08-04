@@ -4,9 +4,13 @@ import { supabase } from "../../supabase/client";
 
 const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
   const [formData, setFormData] = useState(product);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    // Reset form data and error when a new product is selected
     setFormData(product);
+    setError("");
   }, [product]);
 
   const handleChange = (e) => {
@@ -16,16 +20,25 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await supabase
+    setLoading(true);
+    setError("");
+
+    // Destructure to separate the id from the rest of the data
+    const { id, ...updateData } = formData;
+
+    const { error: updateError } = await supabase
       .from("products")
-      .update(formData)
-      .eq("id", product.id);
-    if (error) {
-      console.error("Error updating product:", error);
+      .update(updateData)
+      .eq("id", id);
+
+    if (updateError) {
+      console.error("Error updating product:", updateError);
+      setError("Failed to update product: " + updateError.message);
     } else {
       onProductUpdated();
       onClose();
     }
+    setLoading(false);
   };
 
   if (!isOpen) return null;
@@ -35,11 +48,13 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
       <div className="bg-white p-8 rounded-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6">Edit Product</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Form inputs remain the same... */}
           <input
             type="number"
             name="medicineId"
             value={formData.medicineId}
             onChange={handleChange}
+            placeholder="Medicine ID"
             className="w-full p-2 border rounded"
             required
           />
@@ -48,6 +63,7 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
+            placeholder="Name"
             className="w-full p-2 border rounded"
             required
           />
@@ -56,6 +72,7 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
             name="category"
             value={formData.category}
             onChange={handleChange}
+            placeholder="Category"
             className="w-full p-2 border rounded"
           />
           <input
@@ -63,6 +80,7 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
             name="stock"
             value={formData.stock}
             onChange={handleChange}
+            placeholder="Stock"
             className="w-full p-2 border rounded"
           />
           <input
@@ -79,6 +97,7 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
             className="w-full p-2 border rounded"
           >
             <option value="Medicine">Medicine</option>
+            <option value="Supplement">Supplement</option>
             <option value="Other">Other</option>
           </select>
           <select
@@ -90,19 +109,23 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
             <option value="Available">Available</option>
             <option value="Unavailable">Unavailable</option>
           </select>
+
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
           <div className="flex justify-end gap-4 mt-6">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded bg-gray-200"
+              className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-blue-600 text-white"
+              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300"
+              disabled={loading}
             >
-              Save Changes
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
