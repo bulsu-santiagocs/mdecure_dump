@@ -44,7 +44,7 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50 p-4">
       <div className="bg-white p-8 rounded-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6">Edit Product</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

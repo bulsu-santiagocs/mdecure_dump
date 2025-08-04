@@ -38,7 +38,7 @@ const ViewProductModal = ({ isOpen, onClose, product }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50 p-4">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-2xl transform transition-all">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b">

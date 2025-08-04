@@ -25,7 +25,7 @@ const Dashboard = () => {
     },
     {
       title: "Total Profit",
-      value: "$456",
+      value: "₱456",
       icon: <DollarSign className="text-yellow-500" />,
       iconBg: "bg-yellow-100",
     },
