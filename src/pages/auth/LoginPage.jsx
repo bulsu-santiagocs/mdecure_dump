@@ -1,10 +1,10 @@
+// src/pages/auth/LoginPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { supabase } from "@/supabase/client";
-import logo from "@/assets/images/logo-transparent.png";
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin, branding }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +32,7 @@ const LoginPage = ({ onLogin }) => {
     <div className="flex items-center justify-center h-screen bg-blue-100 font-sans">
       <div className="w-full max-w-lg p-12 space-y-8 bg-white rounded-2xl shadow-xl">
         <div className="flex justify-center">
-          <img src={logo} alt="MedCure Logo" className="h-15 w-15" />
+          <img src={branding.url} alt="MedCure Logo" className="h-20 w-20" />
         </div>
         <div className="text-center">
           <h2 className="text-4xl font-light text-gray-800">Welcome Back</h2>
@@ -105,6 +105,10 @@ const LoginPage = ({ onLogin }) => {
 
 LoginPage.propTypes = {
   onLogin: PropTypes.func.isRequired,
+  branding: PropTypes.shape({
+    url: PropTypes.string,
+    name: PropTypes.string,
+  }).isRequired,
 };
 
 export default LoginPage;
