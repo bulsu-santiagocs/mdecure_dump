@@ -34,7 +34,7 @@ const ViewProductModal = ({ isOpen, onClose, product }) => {
     if (price === null || price === undefined) {
       return "N/A";
     }
-    return `$${price.toFixed(2)}`;
+    return `₱${price.toFixed(2)}`;
   };
 
   return (
