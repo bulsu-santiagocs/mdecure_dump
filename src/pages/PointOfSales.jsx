@@ -156,6 +156,8 @@ const PointOfSales = ({ branding }) => {
               />
               <input
                 type="text"
+                id="pos-search"
+                name="pos-search"
                 placeholder="Search medicine..."
                 className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={searchTerm}

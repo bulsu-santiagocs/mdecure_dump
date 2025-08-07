@@ -19,6 +19,8 @@ const Header = ({ handleLogout, user }) => {
           </div>
           <input
             type="text"
+            id="header-search"
+            name="header-search"
             className="w-full py-2.5 pl-12 pr-4 text-gray-800 bg-gray-50 border border-gray-200 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all"
             placeholder="Search for anything..."
           />
