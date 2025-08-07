@@ -1,7 +1,5 @@
 #Pharmacy Management System 💊
 
-![MedCure Logo](src/assets/images/logo-transparent.png)
-
 **MedCure** is a modern, all-in-one pharmacy management system designed to streamline inventory, sales, and customer management. Built with a clean and intuitive user interface, it helps pharmacy owners and staff manage their daily operations with ease and efficiency.
 
 ---
