@@ -51,6 +51,8 @@ const SecuritySettings = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <input
                 type="password"
+                id="new-password"
+                name="new-password"
                 placeholder="New Password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -59,6 +61,8 @@ const SecuritySettings = () => {
               />
               <input
                 type="password"
+                id="confirm-password"
+                name="confirm-password"
                 placeholder="Confirm New Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}

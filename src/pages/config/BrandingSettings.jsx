@@ -93,6 +93,7 @@ const BrandingSettings = ({ onUpdate }) => {
             <input
               type="file"
               id="logo-upload"
+              name="logo-upload"
               className="hidden"
               onChange={handleLogoUpload}
               disabled={uploading}
@@ -108,6 +109,8 @@ const BrandingSettings = ({ onUpdate }) => {
             <span className="text-gray-700 font-medium">Brand Name</span>
             <input
               type="text"
+              id="brand-name"
+              name="brand-name"
               value={logoName}
               onChange={(e) => setLogoName(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"

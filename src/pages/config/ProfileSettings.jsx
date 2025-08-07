@@ -115,6 +115,7 @@ const ProfileSettings = ({ onUpdate }) => {
             <input
               type="file"
               id="photo-upload"
+              name="photo-upload"
               className="hidden"
               onChange={handlePhotoChange}
               disabled={uploading}
@@ -130,6 +131,8 @@ const ProfileSettings = ({ onUpdate }) => {
             <span className="font-medium text-gray-700">Full Name</span>
             <input
               type="text"
+              id="full-name"
+              name="full-name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -139,6 +142,8 @@ const ProfileSettings = ({ onUpdate }) => {
             <span className="font-medium text-gray-700">Role</span>
             <input
               type="text"
+              id="role"
+              name="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -148,6 +153,8 @@ const ProfileSettings = ({ onUpdate }) => {
             <span className="font-medium text-gray-700">Email Address</span>
             <input
               type="email"
+              id="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -157,6 +164,8 @@ const ProfileSettings = ({ onUpdate }) => {
             <span className="font-medium text-gray-700">Phone Number</span>
             <input
               type="tel"
+              id="phone"
+              name="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
