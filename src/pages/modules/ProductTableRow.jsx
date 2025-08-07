@@ -66,17 +66,17 @@ const ProductTableRow = ({
         {getStatusBadge(product.status)}
       </td>
       <td className="px-6 py-4 text-sm text-center">
-        <div className="flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center justify-center gap-2">
           <button
             onClick={() => onViewProduct(product)}
-            className="text-gray-400 hover:text-blue-600"
+            className="p-2 rounded-full text-gray-400 hover:bg-blue-100 hover:text-blue-600 transition-colors"
             title="View Details"
           >
             <Eye size={18} />
           </button>
           <button
             onClick={() => onEditProduct(product)}
-            className="text-gray-400 hover:text-green-600"
+            className="p-2 rounded-full text-gray-400 hover:bg-green-100 hover:text-green-600 transition-colors"
             title="Edit Product"
           >
             <Pencil size={18} />
