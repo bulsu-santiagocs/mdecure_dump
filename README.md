@@ -1,4 +1,4 @@
-# MedCure - Pharmacy Management System 💊
+#Pharmacy Management System 💊
 
 ![MedCure Logo](src/assets/images/logo-transparent.png)
 
