@@ -1,8 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Plus, Upload, Archive } from "lucide-react";
+import { Plus, Upload, Archive, Download } from "lucide-react";
 
-const ManagementHeader = ({ selectedItemsCount, onAddProduct }) => (
+const ManagementHeader = ({
+  selectedItemsCount,
+  onAddProduct,
+  onArchiveSelected,
+  onImport,
+}) => (
   <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
     <div>
       <h1 className="text-3xl font-bold text-gray-800">Product Management</h1>
@@ -12,11 +17,21 @@ const ManagementHeader = ({ selectedItemsCount, onAddProduct }) => (
     </div>
     <div className="flex items-center gap-3">
       {selectedItemsCount > 0 && (
-        <button className="flex items-center gap-2 border border-red-300 bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors">
+        <button
+          onClick={onArchiveSelected}
+          className="flex items-center gap-2 border border-red-300 bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+        >
           <Archive size={16} />
           Archive Selected ({selectedItemsCount})
         </button>
       )}
+      <button
+        onClick={onImport}
+        className="flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+      >
+        <Download size={16} />
+        Import
+      </button>
       <button className="flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
         <Upload size={16} />
         Export
@@ -35,6 +50,8 @@ const ManagementHeader = ({ selectedItemsCount, onAddProduct }) => (
 ManagementHeader.propTypes = {
   selectedItemsCount: PropTypes.number.isRequired,
   onAddProduct: PropTypes.func.isRequired,
+  onArchiveSelected: PropTypes.func.isRequired,
+  onImport: PropTypes.func.isRequired,
 };
 
 export default ManagementHeader;

@@ -3,10 +3,11 @@ import { supabase } from "@/supabase/client";
 import { useProductSearch } from "@/hooks/useProductSearch";
 import { usePagination } from "@/hooks/usePagination.jsx";
 
-// Import components from the new 'dialogs' folder
+// Import components from the 'dialogs' folder
 import AddProductModal from "@/components/dialogs/AddProductModal";
 import EditProductModal from "@/components/dialogs/EditProductModal";
 import ViewProductModal from "@/components/dialogs/ViewProductModal";
+import ImportCSVModal from "@/components/dialogs/ImportCSVModal"; // Import the new modal
 import ManagementHeader from "./modules/ManagementHeader";
 import ProductFilters from "./modules/ProductFilters";
 import ProductTable from "./modules/ProductTable";
@@ -19,12 +20,47 @@ const Management = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false); // State for import modal
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [activeFilters, setActiveFilters] = useState({
     status: "All",
     productType: "All",
   });
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("products")
+      .select()
+      .neq("status", "Archived"); // Fetch all products that are not archived
+    if (error) {
+      console.error("Error fetching products:", error);
+      setError(error);
+    } else {
+      setProducts(data || []);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleArchiveSelected = async () => {
+    if (selectedItems.length === 0) return;
+    const { error } = await supabase
+      .from("products")
+      .update({ status: "Archived" })
+      .in("id", selectedItems);
+
+    if (error) {
+      console.error("Error archiving products:", error);
+    } else {
+      fetchProducts();
+      setSelectedItems([]);
+    }
+  };
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -46,22 +82,6 @@ const Management = () => {
     PaginationComponent,
     ItemsPerPageComponent,
   } = usePagination(searchedProducts);
-
-  const fetchProducts = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from("products").select();
-    if (error) {
-      console.error("Error fetching products:", error);
-      setError(error);
-    } else {
-      setProducts(data || []);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const handleFilterChange = (filterName, value) => {
     setActiveFilters((prev) => ({ ...prev, [filterName]: value }));
@@ -92,6 +112,11 @@ const Management = () => {
         onClose={() => setIsAddModalOpen(false)}
         onProductAdded={fetchProducts}
       />
+      <ImportCSVModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImportSuccess={fetchProducts}
+      />
       {selectedProduct && (
         <>
           <EditProductModal
@@ -111,6 +136,8 @@ const Management = () => {
         <ManagementHeader
           selectedItemsCount={selectedItems.length}
           onAddProduct={() => setIsAddModalOpen(true)}
+          onArchiveSelected={handleArchiveSelected}
+          onImport={() => setIsImportModalOpen(true)} // Pass handler to open import modal
         />
         <div className="flex items-center justify-between gap-4 py-4 border-t border-b border-gray-200 mb-6">
           <ProductFilters
