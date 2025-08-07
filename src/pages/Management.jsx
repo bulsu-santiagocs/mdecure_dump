@@ -7,7 +7,7 @@ import { usePagination } from "@/hooks/usePagination.jsx";
 import AddProductModal from "@/components/dialogs/AddProductModal";
 import EditProductModal from "@/components/dialogs/EditProductModal";
 import ViewProductModal from "@/components/dialogs/ViewProductModal";
-import ImportCSVModal from "@/components/dialogs/ImportCSVModal"; // Import the new modal
+import ImportCSVModal from "@/dialogs/ImportCSVModal"; // Corrected import path
 import ManagementHeader from "./modules/ManagementHeader";
 import ProductFilters from "./modules/ProductFilters";
 import ProductTable from "./modules/ProductTable";
