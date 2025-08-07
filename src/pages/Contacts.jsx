@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import {
   Search,
   Plus,
@@ -6,6 +7,81 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+
+const ContactCard = ({ contact }) => (
+  <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg hover:border-blue-500 transition-all duration-300">
+    <div className="flex items-start justify-between">
+      <div className="flex items-center gap-4">
+        <img
+          src={contact.avatar}
+          alt={contact.name}
+          className="w-14 h-14 rounded-full object-cover"
+        />
+        <div>
+          <h3 className="font-bold text-lg text-gray-800">{contact.name}</h3>
+          <span className="text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+            {contact.role}
+          </span>
+        </div>
+      </div>
+      <button className="text-gray-400 hover:text-gray-600">
+        <MoreVertical size={20} />
+      </button>
+    </div>
+    <div className="grid grid-cols-2 gap-y-4 gap-x-2 mt-6 text-sm">
+      <div>
+        <p className="text-gray-500">Phone</p>
+        <p className="font-medium text-gray-700">{contact.phone}</p>
+      </div>
+      <div>
+        <p className="text-gray-500">Blood Group</p>
+        <p className="font-medium text-gray-700">{contact.bloodGroup}</p>
+      </div>
+      <div className="col-span-2">
+        <p className="text-gray-500">Email</p>
+        <p className="font-medium text-gray-700">{contact.email}</p>
+      </div>
+    </div>
+  </div>
+);
+
+ContactCard.propTypes = {
+  contact: PropTypes.shape({
+    avatar: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+    bloodGroup: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
+const Pagination = () => {
+  const pages = [1, 2, 3, 4, 5, "...", 38, 39, 40];
+  const currentPage = 1;
+  return (
+    <nav className="flex items-center space-x-1">
+      <button className="p-2 rounded hover:bg-gray-100 text-gray-500">
+        <ChevronLeft size={20} />
+      </button>
+      {pages.map((page, index) => (
+        <button
+          key={`page-${page}-${index}`}
+          className={`px-4 py-2 rounded text-sm font-medium ${
+            page === currentPage
+              ? "bg-blue-600 text-white"
+              : "hover:bg-gray-100 text-gray-600"
+          } ${page === "..." ? "pointer-events-none" : ""}`}
+        >
+          {page}
+        </button>
+      ))}
+      <button className="p-2 rounded hover:bg-gray-100 text-gray-500">
+        <ChevronRight size={20} />
+      </button>
+    </nav>
+  );
+};
 
 const Contacts = () => {
   const [activeTab, setActiveTab] = useState("Suppliers");
@@ -60,70 +136,6 @@ const Contacts = () => {
   const dataToShow = activeTab === "Suppliers" ? suppliers : employees;
   const addButtonText =
     activeTab === "Suppliers" ? "Add New Supplier" : "Add New Employee";
-
-  const ContactCard = ({ contact }) => (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg hover:border-blue-500 transition-all duration-300">
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <img
-            src={contact.avatar}
-            alt={contact.name}
-            className="w-14 h-14 rounded-full object-cover"
-          />
-          <div>
-            <h3 className="font-bold text-lg text-gray-800">{contact.name}</h3>
-            <span className="text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-              {contact.role}
-            </span>
-          </div>
-        </div>
-        <button className="text-gray-400 hover:text-gray-600">
-          <MoreVertical size={20} />
-        </button>
-      </div>
-      <div className="grid grid-cols-2 gap-y-4 gap-x-2 mt-6 text-sm">
-        <div>
-          <p className="text-gray-500">Phone</p>
-          <p className="font-medium text-gray-700">{contact.phone}</p>
-        </div>
-        <div>
-          <p className="text-gray-500">Blood Group</p>
-          <p className="font-medium text-gray-700">{contact.bloodGroup}</p>
-        </div>
-        <div className="col-span-2">
-          <p className="text-gray-500">Email</p>
-          <p className="font-medium text-gray-700">{contact.email}</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  const Pagination = () => {
-    const pages = [1, 2, 3, 4, 5, "...", 38, 39, 40];
-    const currentPage = 1;
-    return (
-      <nav className="flex items-center space-x-1">
-        <button className="p-2 rounded hover:bg-gray-100 text-gray-500">
-          <ChevronLeft size={20} />
-        </button>
-        {pages.map((page, index) => (
-          <button
-            key={index}
-            className={`px-4 py-2 rounded text-sm font-medium ${
-              page === currentPage
-                ? "bg-blue-600 text-white"
-                : "hover:bg-gray-100 text-gray-600"
-            } ${page === "..." ? "pointer-events-none" : ""}`}
-          >
-            {page}
-          </button>
-        ))}
-        <button className="p-2 rounded hover:bg-gray-100 text-gray-500">
-          <ChevronRight size={20} />
-        </button>
-      </nav>
-    );
-  };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm">
