@@ -4,10 +4,10 @@ import { useProductSearch } from "@/hooks/useProductSearch";
 import { usePagination } from "@/hooks/usePagination.jsx";
 
 // Import components from the 'dialogs' folder
-import AddProductModal from "@/components/dialogs/AddProductModal";
-import EditProductModal from "@/components/dialogs/EditProductModal";
-import ViewProductModal from "@/components/dialogs/ViewProductModal";
-import ImportCSVModal from "@/dialogs/ImportCSVModal"; // Corrected import path
+import AddProductModal from "@/dialogs/AddProductModal";
+import EditProductModal from "@/dialogs/EditProductModal";
+import ViewProductModal from "@/dialogs/ViewProductModal";
+import ImportCSVModal from "@/dialogs/ImportCSVModal";
 import ManagementHeader from "./modules/ManagementHeader";
 import ProductFilters from "./modules/ProductFilters";
 import ProductTable from "./modules/ProductTable";
@@ -20,7 +20,7 @@ const Management = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false); // State for import modal
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [activeFilters, setActiveFilters] = useState({
@@ -137,7 +137,7 @@ const Management = () => {
           selectedItemsCount={selectedItems.length}
           onAddProduct={() => setIsAddModalOpen(true)}
           onArchiveSelected={handleArchiveSelected}
-          onImport={() => setIsImportModalOpen(true)} // Pass handler to open import modal
+          onImport={() => setIsImportModalOpen(true)}
         />
         <div className="flex items-center justify-between gap-4 py-4 border-t border-b border-gray-200 mb-6">
           <ProductFilters
