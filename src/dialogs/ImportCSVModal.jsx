@@ -151,8 +151,8 @@ const ImportCSVModal = ({ isOpen, onClose, onImportSuccess }) => {
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
             Select a CSV file to import. The file should have headers: `name`,
-            `category`, `quantity`, `price`, `expireDate`, `productType`,
-            `status`, `description`.
+            `category`, `quantity`, `price`, `expireDate`, `productType`, and
+            `description`.
           </p>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
             <label
