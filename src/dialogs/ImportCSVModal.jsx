@@ -24,24 +24,37 @@ const ImportCSVModal = ({ isOpen, onClose, onImportSuccess }) => {
     }
   };
 
-  const parseCSV = (csvText) => {
-    const lines = csvText.split(/\r\n|\n/);
+  const parseAndPrepareData = (csvText, startingId) => {
+    const lines = csvText.split(/\r\n|\n/).filter((line) => line.trim() !== "");
+    if (lines.length <= 1) return [];
+
     const headers = lines[0].split(",").map((header) => header.trim());
     const data = [];
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    const year = today.getFullYear();
+    const datePart = `${month}${day}${year}`;
 
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i]) continue;
       const values = lines[i].split(",");
       const entry = {};
       headers.forEach((header, index) => {
-        // Ensure properties that should be numbers are converted
         const value = values[index] ? values[index].trim() : null;
-        if (["medicineId", "stock", "price"].includes(header) && value) {
+        if (["stock", "price"].includes(header) && value) {
           entry[header] = Number(value);
         } else {
           entry[header] = value;
         }
       });
+
+      // Auto-generate medicineId and set status
+      const nextId = startingId + i - 1;
+      const typePart = entry.productType === "Medicine" ? "1" : "0";
+      entry.medicineId = `${datePart}${typePart}${nextId}`;
+      entry.status = "Available";
+
       data.push(entry);
     }
     return data;
@@ -60,13 +73,32 @@ const ImportCSVModal = ({ isOpen, onClose, onImportSuccess }) => {
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
-        const productsToInsert = parseCSV(event.target.result);
+        // 1. Get the last product ID to determine the next ID
+        const { data: lastProduct, error: fetchError } = await supabase
+          .from("products")
+          .select("id")
+          .order("id", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (fetchError && fetchError.code !== "PGRST116") {
+          throw fetchError;
+        }
+
+        const nextId = lastProduct ? lastProduct.id + 1 : 1;
+
+        // 2. Parse CSV and generate medicine IDs
+        const productsToInsert = parseAndPrepareData(
+          event.target.result,
+          nextId
+        );
         if (productsToInsert.length === 0) {
           setError("CSV file is empty or invalid.");
           setLoading(false);
           return;
         }
 
+        // 3. Insert the new products
         const { error: insertError } = await supabase
           .from("products")
           .insert(productsToInsert);
@@ -118,9 +150,9 @@ const ImportCSVModal = ({ isOpen, onClose, onImportSuccess }) => {
 
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Select a CSV file to import. The file should have headers matching
-            the product fields: `medicineId`, `name`, `category`, `stock`,
-            `expireDate`, `productType`, `status`, `price`, `description`.
+            Select a CSV file to import. The file should have headers: `name`,
+            `category`, `stock`, `price`, `expireDate`, `productType`, `status`,
+            `description`.
           </p>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
             <label
