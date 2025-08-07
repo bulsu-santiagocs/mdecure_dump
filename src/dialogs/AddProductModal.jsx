@@ -7,7 +7,7 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
   const [formData, setFormData] = useState({
     name: "",
     category: "",
-    stock: "",
+    quantity: "",
     price: "",
     expireDate: "",
     productType: "Medicine",
@@ -122,8 +122,8 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
             />
             <input
               type="number"
-              name="stock"
-              placeholder="Stock"
+              name="quantity"
+              placeholder="Quantity"
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

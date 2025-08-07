@@ -54,7 +54,7 @@ const ProductTableRow = ({
         {product.category}
       </td>
       <td className="px-6 py-4 text-sm text-gray-600 text-center">
-        {product.stock}
+        {product.quantity}
       </td>
       <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
         {product.expireDate}

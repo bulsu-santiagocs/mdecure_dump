@@ -100,7 +100,8 @@ const Archived = () => {
                   {product.medicineId}
                 </p>
                 <p>
-                  <span className="font-semibold">Stock:</span> {product.stock}
+                  <span className="font-semibold">Quantity:</span>{" "}
+                  {product.quantity}
                 </p>
                 <p>
                   <span className="font-semibold">Expire Date:</span>{" "}

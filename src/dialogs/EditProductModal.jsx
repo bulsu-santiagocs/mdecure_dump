@@ -95,10 +95,10 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
             />
             <input
               type="number"
-              name="stock"
-              value={formData.stock}
+              name="quantity"
+              value={formData.quantity}
               onChange={handleChange}
-              placeholder="Stock"
+              placeholder="Quantity"
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

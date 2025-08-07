@@ -26,9 +26,12 @@ const generateProductPDF = async (products, brandingData) => {
     const logoBase64 = await toBase64(brandingData.logo_url);
 
     const totalProducts = products.length;
-    const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+    const totalquantity = products.reduce(
+      (sum, p) => sum + (p.quantity || 0),
+      0
+    );
     const totalValue = products.reduce(
-      (sum, p) => sum + (p.stock || 0) * (p.price || 0),
+      (sum, p) => sum + (p.quantity || 0) * (p.price || 0),
       0
     );
     const availableCount = products.filter(
@@ -42,7 +45,7 @@ const generateProductPDF = async (products, brandingData) => {
       "ID",
       "Name",
       "Category",
-      "Stock",
+      "Quantity",
       "Price",
       "Expiry",
       "Status",
@@ -52,7 +55,7 @@ const generateProductPDF = async (products, brandingData) => {
       p.medicineId || "N/A",
       p.name || "N/A",
       p.category || "N/A",
-      p.stock,
+      p.quantity,
       `PHP ${p.price ? p.price.toFixed(2) : "0.00"}`,
       p.expireDate || "N/A",
       p.status || "N/A",
@@ -96,7 +99,7 @@ const generateProductPDF = async (products, brandingData) => {
       autoTable(doc, {
         body: [
           ["Total Products:", totalProducts],
-          ["Total Stock Count:", totalStock],
+          ["Total quantity Count:", totalquantity],
           // **FIX**: Replaced '₱' with 'PHP ' for universal compatibility.
           ["Estimated Total Value:", `PHP ${totalValue.toFixed(2)}`],
           [
