@@ -5,29 +5,26 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Loader, CheckCircle, XCircle } from "lucide-react";
 
-// --- PDF Generation Logic ---
+const toBase64 = (url) =>
+  fetch(url)
+    .then((response) => response.blob())
+    .then(
+      (blob) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+    );
+
 const generateProductPDF = async (products, brandingData) => {
   try {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
-
-    const toBase64 = (url) =>
-      fetch(url)
-        .then((response) => response.blob())
-        .then(
-          (blob) =>
-            new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.onerror = reject;
-              reader.readAsDataURL(blob);
-            })
-        );
-
     const logoBase64 = await toBase64(brandingData.logo_url);
 
-    // --- Calculate Summary Details ---
     const totalProducts = products.length;
     const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
     const totalValue = products.reduce(
@@ -41,7 +38,6 @@ const generateProductPDF = async (products, brandingData) => {
       (p) => p.status === "Unavailable"
     ).length;
 
-    // --- Define Table Data ---
     const tableColumn = [
       "ID",
       "Name",
@@ -51,17 +47,17 @@ const generateProductPDF = async (products, brandingData) => {
       "Expiry",
       "Status",
     ];
+    // **FIX**: Replaced '₱' with 'PHP ' for universal compatibility.
     const tableRows = products.map((p) => [
       p.medicineId || "N/A",
       p.name || "N/A",
       p.category || "N/A",
       p.stock,
-      `P${p.price ? p.price.toFixed(2) : "0.00"}`,
+      `PHP ${p.price ? p.price.toFixed(2) : "0.00"}`,
       p.expireDate || "N/A",
       p.status || "N/A",
     ]);
 
-    // --- Date and Time Formatting ---
     const exportDateTime = new Date().toLocaleString("en-US", {
       timeZone: "Asia/Manila",
       year: "numeric",
@@ -72,7 +68,6 @@ const generateProductPDF = async (products, brandingData) => {
       second: "2-digit",
     });
 
-    // --- Draw Header and Summary on First Page ---
     const drawHeaderAndSummary = () => {
       doc.addImage(logoBase64, "PNG", 14, 10, 20, 20);
       doc.setFontSize(18);
@@ -102,7 +97,8 @@ const generateProductPDF = async (products, brandingData) => {
         body: [
           ["Total Products:", totalProducts],
           ["Total Stock Count:", totalStock],
-          ["Estimated Total Value:", `P${totalValue.toFixed(2)}`],
+          // **FIX**: Replaced '₱' with 'PHP ' for universal compatibility.
+          ["Estimated Total Value:", `PHP ${totalValue.toFixed(2)}`],
           [
             "Available / Unavailable:",
             `${availableCount} / ${unavailableCount}`,
@@ -118,11 +114,10 @@ const generateProductPDF = async (products, brandingData) => {
     drawHeaderAndSummary();
     const summaryFinalY = doc.lastAutoTable.finalY;
 
-    // --- Generate Main Table ---
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
-      startY: summaryFinalY + 5, // **FIX: Start after the summary table**
+      startY: summaryFinalY + 5,
       theme: "grid",
       headStyles: { fillColor: [22, 160, 133], textColor: 255 },
       styles: { fontSize: 9 },
@@ -137,7 +132,6 @@ const generateProductPDF = async (products, brandingData) => {
       },
       margin: { top: 40 },
       didDrawPage: (data) => {
-        // Draw header on subsequent pages
         if (data.pageNumber > 1) {
           doc.addImage(logoBase64, "PNG", 14, 10, 20, 20);
           doc.setFontSize(18);
@@ -165,7 +159,6 @@ const generateProductPDF = async (products, brandingData) => {
           doc.line(14, 38, pageWidth - 14, 38);
         }
 
-        // Draw footer on all pages
         doc.setFontSize(8);
         doc.setTextColor(150);
         const footerText = `Page ${
@@ -189,9 +182,8 @@ const generateProductPDF = async (products, brandingData) => {
   }
 };
 
-// --- React Component ---
 const ExportPDFModal = ({ isOpen, onClose, allProducts }) => {
-  const [status, setStatus] = useState("generating"); // 'generating', 'success', 'error'
+  const [status, setStatus] = useState("generating");
 
   useEffect(() => {
     if (isOpen) {
