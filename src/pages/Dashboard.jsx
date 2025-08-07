@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Archive,
   Pill,
@@ -7,88 +7,153 @@ import {
   ChevronDown,
   ArrowUpRight,
 } from "lucide-react";
+import { supabase } from "@/supabase/client";
 
 const Dashboard = () => {
-  // Static data for the dashboard components as requested.
-  const summaryCards = [
+  const [summaryCards, setSummaryCards] = useState([
     {
       title: "Inventory Status",
-      value: "120",
+      value: "0",
       icon: <Archive className="text-green-500" />,
       iconBg: "bg-green-100",
     },
     {
       title: "Medicine Available",
-      value: "234",
+      value: "0",
       icon: <Pill className="text-blue-500" />,
       iconBg: "bg-blue-100",
     },
     {
       title: "Total Profit",
-      value: "₱456",
+      value: "₱0",
       icon: <DollarSign className="text-yellow-500" />,
       iconBg: "bg-yellow-100",
     },
     {
       title: "Out of Stock",
-      value: "56",
+      value: "0",
       icon: <PackageX className="text-red-500" />,
       iconBg: "bg-red-100",
     },
-  ];
+  ]);
 
-  const monthlyProgressData = [
-    { month: "Jan", value: 70 },
-    { month: "Feb", value: 48 },
-    { month: "Mar", value: 58 },
-    { month: "Apr", value: 85 },
-    { month: "May", value: 55 },
-    { month: "Jun", value: 88 },
-    { month: "Jul", value: 110, isCurrent: true }, // Max value from image is ~110
-    { month: "Aug", value: 75 },
-    { month: "Sep", value: 57 },
-    { month: "Oct", value: 78 },
-    { month: "Nov", value: 95 },
-    { month: "Dec", value: 65 },
-  ];
+  const [monthlyProgressData, setMonthlyProgressData] = useState([]);
+  const [posData, setPosData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [totalEarning, setTotalEarning] = useState(0);
 
-  const posData = [
-    {
-      medicineName: "Paricel 15mg",
-      batchNo: "783627\n834",
-      quantity: 40,
-      status: "Delivered",
-      price: "₱23.00",
-    },
-    {
-      medicineName: "Abetis 20mg",
-      batchNo: "88832\n433",
-      quantity: 40,
-      status: "Pending",
-      price: "₱23.00",
-    },
-    {
-      medicineName: "Cerox CV",
-      batchNo: "767676\n344",
-      quantity: 40,
-      status: "Canceled",
-      price: "₱23.00",
-    },
-    {
-      medicineName: "Abetis 20mg",
-      batchNo: "45578\n866",
-      quantity: 40,
-      status: "Delivered",
-      price: "₱23.00",
-    },
-    {
-      medicineName: "Cerox CV",
-      batchNo: "767676\n344",
-      quantity: 40,
-      status: "Canceled",
-      price: "₱23.00",
-    },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      try {
+        // Fetch products for inventory stats
+        const { data: products, error: productsError } = await supabase
+          .from("products")
+          .select("quantity, status, price");
+
+        if (productsError) throw productsError;
+
+        const inventoryStatus = products.length;
+        const medicineAvailable = products.filter(
+          (p) => p.status === "Available"
+        ).length;
+        const outOfStock = products.filter((p) => p.quantity === 0).length;
+        const totalProfit = products.reduce(
+          (acc, p) => acc + (p.price || 0) * (p.quantity || 0),
+          0
+        );
+
+        // Fetch sales for profit and monthly progress
+        const { data: sales, error: salesError } = await supabase
+          .from("sales")
+          .select("created_at, total_amount");
+
+        if (salesError) throw salesError;
+
+        const currentTotalEarning = sales.reduce(
+          (acc, s) => acc + s.total_amount,
+          0
+        );
+        setTotalEarning(currentTotalEarning);
+
+        const monthlySales = sales.reduce((acc, sale) => {
+          const month = new Date(sale.created_at).getMonth(); // 0-11
+          acc[month] = (acc[month] || 0) + sale.total_amount;
+          return acc;
+        }, {});
+
+        const currentMonth = new Date().getMonth();
+        const generatedMonthlyProgress = Array.from({ length: 12 }, (_, i) => {
+          const monthName = new Date(0, i).toLocaleString("default", {
+            month: "short",
+          });
+          return {
+            month: monthName,
+            value: monthlySales[i] || 0,
+            isCurrent: i === currentMonth,
+          };
+        });
+        setMonthlyProgressData(generatedMonthlyProgress);
+
+        // Fetch recent POS data
+        const { data: recentSales, error: recentSalesError } = await supabase
+          .from("sale_items")
+          .select(
+            `
+            quantity,
+            price_at_sale,
+            sales (created_at),
+            products (name, medicineId)
+          `
+          )
+          .limit(5);
+
+        if (recentSalesError) throw recentSalesError;
+
+        const formattedPosData = recentSales.map((item) => ({
+          medicineName: item.products.name,
+          batchNo: item.products.medicineId,
+          quantity: item.quantity,
+          status: "Delivered", // This is static in the original, can be changed if sale status is tracked
+          price: `₱${item.price_at_sale.toFixed(2)}`,
+        }));
+        setPosData(formattedPosData);
+
+        setSummaryCards([
+          {
+            title: "Inventory Status",
+            value: inventoryStatus.toString(),
+            icon: <Archive className="text-green-500" />,
+            iconBg: "bg-green-100",
+          },
+          {
+            title: "Medicine Available",
+            value: medicineAvailable.toString(),
+            icon: <Pill className="text-blue-500" />,
+            iconBg: "bg-blue-100",
+          },
+          {
+            title: "Total Profit",
+            value: `₱${totalProfit.toFixed(2)}`,
+            icon: <DollarSign className="text-yellow-500" />,
+            iconBg: "bg-yellow-100",
+          },
+          {
+            title: "Out of Stock",
+            value: outOfStock.toString(),
+            icon: <PackageX className="text-red-500" />,
+            iconBg: "bg-red-100",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const getStatusChip = (status) => {
     switch (status) {
@@ -118,6 +183,14 @@ const Dashboard = () => {
         );
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -162,8 +235,8 @@ const Dashboard = () => {
                 <div className="relative group w-full flex items-end justify-center h-full">
                   {item.isCurrent && (
                     <div className="absolute -top-10 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2">
-                      <p className="font-bold">July</p>
-                      <p>10k</p>
+                      <p className="font-bold">{item.month}</p>
+                      <p>₱{item.value.toFixed(2)}</p>
                       <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-2 h-2 bg-gray-800 transform rotate-45 -mb-1"></div>
                     </div>
                   )}
@@ -171,7 +244,15 @@ const Dashboard = () => {
                     className={`w-3/4 rounded-t-md ${
                       item.isCurrent ? "bg-gray-700" : "bg-gray-200"
                     } hover:bg-blue-400 transition-colors`}
-                    style={{ height: `${(item.value / 120) * 100}%` }}
+                    style={{
+                      height: `${
+                        (item.value /
+                          (Math.max(
+                            ...monthlyProgressData.map((d) => d.value)
+                          ) || 1)) *
+                        100
+                      }%`,
+                    }}
                   ></div>
                 </div>
                 <span className="text-xs text-gray-500 mt-2">{item.month}</span>
@@ -218,7 +299,9 @@ const Dashboard = () => {
             <div className="absolute w-[85%] h-[85%] bg-white rounded-full"></div>
             <div className="absolute text-center">
               <p className="text-gray-500 text-sm">Total Earning</p>
-              <p className="text-2xl font-bold text-gray-800">₱5098.00</p>
+              <p className="text-2xl font-bold text-gray-800">
+                ₱{totalEarning.toFixed(2)}
+              </p>
               <div className="flex items-center justify-center text-green-500 text-xs mt-1">
                 <ArrowUpRight size={12} />
                 <span>15.5%</span>
