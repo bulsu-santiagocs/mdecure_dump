@@ -26,7 +26,7 @@ const generateProductPDF = async (products, brandingData) => {
     const logoBase64 = await toBase64(brandingData.logo_url);
 
     const totalProducts = products.length;
-    const totalquantity = products.reduce(
+    const totalQuantity = products.reduce(
       (sum, p) => sum + (p.quantity || 0),
       0
     );
@@ -50,7 +50,6 @@ const generateProductPDF = async (products, brandingData) => {
       "Expiry",
       "Status",
     ];
-    // **FIX**: Replaced '₱' with 'PHP ' for universal compatibility.
     const tableRows = products.map((p) => [
       p.medicineId || "N/A",
       p.name || "N/A",
@@ -99,8 +98,7 @@ const generateProductPDF = async (products, brandingData) => {
       autoTable(doc, {
         body: [
           ["Total Products:", totalProducts],
-          ["Total quantity Count:", totalquantity],
-          // **FIX**: Replaced '₱' with 'PHP ' for universal compatibility.
+          ["Total Quantity:", totalQuantity],
           ["Estimated Total Value:", `PHP ${totalValue.toFixed(2)}`],
           [
             "Available / Unavailable:",
@@ -125,12 +123,12 @@ const generateProductPDF = async (products, brandingData) => {
       headStyles: { fillColor: [22, 160, 133], textColor: 255 },
       styles: { fontSize: 9 },
       columnStyles: {
-        0: { cellWidth: 35 },
+        0: { cellWidth: 25 },
         1: { cellWidth: "auto" },
-        2: { cellWidth: 30 },
-        3: { cellWidth: 15 },
-        4: { cellWidth: 20 },
-        5: { cellWidth: 25 },
+        2: { cellWidth: 25 },
+        3: { cellWidth: 20, halign: "center" },
+        4: { cellWidth: 20, halign: "right" },
+        5: { cellWidth: 22 },
         6: { cellWidth: 22 },
       },
       margin: { top: 40 },
