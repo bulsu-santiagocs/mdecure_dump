@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Wallet,
+  Archive, // Changed from Wallet
   Pill,
   TrendingUp,
   PackageX,
@@ -14,7 +14,7 @@ const Dashboard = () => {
     {
       title: "Inventory Status",
       value: "0",
-      icon: <Wallet className="text-indigo-500" />,
+      icon: <Archive className="text-indigo-500" />, // Changed from Wallet
       iconBg: "bg-indigo-100",
     },
     {
@@ -120,7 +120,7 @@ const Dashboard = () => {
           {
             title: "Inventory Status",
             value: inventoryStatus.toString(),
-            icon: <Wallet className="text-indigo-500" />,
+            icon: <Archive className="text-indigo-500" />, // Changed from Wallet
             iconBg: "bg-indigo-100",
           },
           {
