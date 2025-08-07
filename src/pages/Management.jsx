@@ -3,11 +3,14 @@ import { supabase } from "@/supabase/client";
 import { useProductSearch } from "@/hooks/useProductSearch";
 import { usePagination } from "@/hooks/usePagination.jsx";
 
-// Import components from the 'dialogs' folder
+// Import all dialogs/modals
 import AddProductModal from "@/dialogs/AddProductModal";
 import EditProductModal from "@/dialogs/EditProductModal";
 import ViewProductModal from "@/dialogs/ViewProductModal";
 import ImportCSVModal from "@/dialogs/ImportCSVModal";
+import ExportPDFModal from "@/dialogs/ExportPDFModal";
+
+// Import page-specific components
 import ManagementHeader from "./modules/ManagementHeader";
 import ProductFilters from "./modules/ProductFilters";
 import ProductTable from "./modules/ProductTable";
@@ -17,12 +20,15 @@ const Management = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // State for all modals
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeFilters, setActiveFilters] = useState({
     status: "All",
     productType: "All",
@@ -33,7 +39,7 @@ const Management = () => {
     const { data, error } = await supabase
       .from("products")
       .select()
-      .neq("status", "Archived"); // Fetch all products that are not archived
+      .neq("status", "Archived");
     if (error) {
       console.error("Error fetching products:", error);
       setError(error);
@@ -107,6 +113,7 @@ const Management = () => {
 
   return (
     <>
+      {/* All Modals */}
       <AddProductModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -116,6 +123,11 @@ const Management = () => {
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
         onImportSuccess={fetchProducts}
+      />
+      <ExportPDFModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        allProducts={products}
       />
       {selectedProduct && (
         <>
@@ -132,12 +144,15 @@ const Management = () => {
           />
         </>
       )}
+
+      {/* Main Page Content */}
       <div className="bg-white p-8 rounded-2xl shadow-lg font-sans">
         <ManagementHeader
           selectedItemsCount={selectedItems.length}
           onAddProduct={() => setIsAddModalOpen(true)}
           onArchiveSelected={handleArchiveSelected}
           onImport={() => setIsImportModalOpen(true)}
+          onExport={() => setIsExportModalOpen(true)}
         />
         <div className="flex items-center justify-between gap-4 py-4 border-t border-b border-gray-200 mb-6">
           <ProductFilters

@@ -7,6 +7,7 @@ const ManagementHeader = ({
   onAddProduct,
   onArchiveSelected,
   onImport,
+  onExport, // Add onExport prop
 }) => (
   <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
     <div>
@@ -32,9 +33,13 @@ const ManagementHeader = ({
         <Download size={16} />
         Import
       </button>
-      <button className="flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
+      {/* Updated Export Button */}
+      <button
+        onClick={onExport}
+        className="flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+      >
         <Upload size={16} />
-        Export
+        Export as PDF
       </button>
       <button
         onClick={onAddProduct}
@@ -52,6 +57,7 @@ ManagementHeader.propTypes = {
   onAddProduct: PropTypes.func.isRequired,
   onArchiveSelected: PropTypes.func.isRequired,
   onImport: PropTypes.func.isRequired,
+  onExport: PropTypes.func.isRequired, // Add prop type
 };
 
 export default ManagementHeader;
