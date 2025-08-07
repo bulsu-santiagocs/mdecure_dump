@@ -7,6 +7,7 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
     name: "",
     category: "",
     stock: "",
+    price: "",
     expireDate: "",
     productType: "Medicine",
     description: "",
@@ -25,7 +26,9 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
     setError("");
 
     try {
-      // 1. Get the last product ID for the auto-increment part
+      // **FIX STARTS HERE**
+      // 1. Get the last product to find the highest ID.
+      // This query finds the single product with the largest 'id'.
       const { data: lastProduct, error: fetchError } = await supabase
         .from("products")
         .select("id")
@@ -33,30 +36,33 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
         .limit(1)
         .single();
 
+      // Handle potential errors, but ignore the "no rows found" error which happens if the table is empty.
       if (fetchError && fetchError.code !== "PGRST116") {
-        // Ignore 'range not found' error for empty table
         throw fetchError;
       }
 
+      // 2. Determine the next ID in the sequence.
+      // If a product was found, add 1 to its id. If not (table is empty), start with 1.
       const nextId = lastProduct ? lastProduct.id + 1 : 1;
 
-      // 2. Generate the medicineId
+      // 3. Generate the new medicineId using the correct nextId.
       const today = new Date();
       const month = String(today.getMonth() + 1).padStart(2, "0");
       const day = String(today.getDate()).padStart(2, "0");
       const year = today.getFullYear();
       const datePart = `${month}${day}${year}`;
-      const typePart = formData.productType === "Medicine" ? "1" : "0"; // 1 for Medicine, 0 for others
+      const typePart = formData.productType === "Medicine" ? "1" : "0";
       const newMedicineId = `${datePart}${typePart}${nextId}`;
+      // **FIX ENDS HERE**
 
-      // 3. Prepare data for insertion
+      // Prepare the final product object for insertion.
       const productToInsert = {
         ...formData,
         medicineId: newMedicineId,
-        status: "Available", // Always set status to "Available"
+        status: "Available",
       };
 
-      // 4. Insert the new product
+      // Insert the new product into the database.
       const { error: insertError } = await supabase
         .from("products")
         .insert([productToInsert]);
@@ -65,6 +71,7 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
         throw insertError;
       }
 
+      // Refresh the product list on the management page and close the modal.
       onProductAdded();
       onClose();
     } catch (e) {
