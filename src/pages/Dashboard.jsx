@@ -268,9 +268,9 @@ const Dashboard = () => {
             </div>
             {/* Table Body */}
             <div className="divide-y divide-gray-200">
-              {posData.map((item) => (
+              {posData.map((item, index) => (
                 <div
-                  key={item.medicineName + item.batchNo}
+                  key={`${item.medicineName}-${item.batchNo}-${index}`}
                   className="grid grid-cols-5 gap-4 py-4 items-center text-sm text-gray-800"
                 >
                   <div className="col-span-1 font-medium whitespace-pre-wrap">
