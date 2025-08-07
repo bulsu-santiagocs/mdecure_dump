@@ -1,82 +1,82 @@
-#Pharmacy Management System 💊
+# MedCure 💊
 
-**MedCure** is a modern, all-in-one pharmacy management system designed to streamline inventory, sales, and customer management. Built with a clean and intuitive user interface, it helps pharmacy owners and staff manage their daily operations with ease and efficiency.
+A modern, intuitive, and efficient pharmacy management solution built with the latest web technologies. MedCure provides a seamless experience for managing sales, inventory, and customer data.
 
----
+-----
 
 ## ✨ Features
 
--   **📊 Interactive Dashboard:** Get a real-time overview of your pharmacy's performance with key metrics like inventory status, sales figures, and profit tracking.
--   **📦 Product Management:** Easily add, edit, and archive products. Keep track of quantities, prices, categories, and expiration dates.
--   **🛒 Point of Sale (P.O.S.):** A sleek and responsive P.O.S. interface for quick and easy transactions, with integrated discount options for PWD/Seniors.
--   **📜 Sales History & Receipts:** View a comprehensive history of all sales transactions and print professional PDF receipts for any sale.
--   **📂 Data Import/Export:** Bulk import product data from CSV files and export detailed inventory reports to PDF.
--   **⚙️ Customizable Settings:** Tailor the application to your needs by updating branding, profile information, and security settings.
--   **🔒 Secure Authentication:** Built with Supabase for secure and reliable user authentication.
+  * **Dashboard:** Get a quick overview of your pharmacy's performance.
+  * **Point of Sales (POS):** A simple and efficient interface for processing transactions.
+  * **Management:** Manage your inventory, staff, and other resources.
+  * **Notifications:** Stay updated with important alerts.
+  * **Secure Authentication:** Powered by Supabase for secure login and user management.
+  * **Responsive Design:** A clean and responsive UI that works on all devices.
 
----
+-----
 
-## 🛠️ Tech Stack
+## 🚀 Tech Stack
 
--   **Frontend:** [React](https://reactjs.org/) & [Vite](https://vitejs.dev/)
--   **Backend & Database:** [Supabase](https://supabase.io/)
--   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
--   **Icons:** [Lucide React](https://lucide.dev/)
--   **PDF Generation:** [jsPDF](https://github.com/parallax/jsPDF) & [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable)
+  * **Frontend:** [React](https://react.dev/), [Vite](https://vitejs.dev/)
+  * **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+  * **Backend & Database:** [Supabase](https://supabase.com/)
+  * **Routing:** [React Router](https://reactrouter.com/)
+  * **Icons:** [Lucide React](https://lucide.dev/)
 
----
+-----
 
-## 🚀 Getting Started
+## 🛠️ Getting Started
 
-To get a local copy up and running, follow these simple steps.
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
--   Node.js (v16 or higher)
--   npm or yarn
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine (v20.19.0 or higher is recommended). This will include `npm`.
 
-### Installation
+### Installation & Setup
 
-1.  **Clone the repo**
-    ```sh
-    git clone [https://github.com/your_username/medcure.git](https://github.com/your_username/medcure.git)
+1.  **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/bulsu-santiagocs/medcure-official.git
+    cd medcure-official
     ```
-2.  **Navigate to the project directory**
-    ```sh
-    cd medcure
-    ```
-3.  **Install NPM packages**
-    ```sh
+
+2.  **Install dependencies:**
+    Use npm to install the required packages from `package.json`.
+
+    ```bash
     npm install
     ```
-4.  **Set up your Supabase environment variables**
 
-    Create a `.env` file in the root of your project and add your Supabase URL and Anon Key:
-    ```
-    VITE_SUPABASE_URL=YOUR_SUPABASE_URL
-    VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
-    ```
-5.  **Run the development server**
-    ```sh
-    npm run dev
-    ```
+3.  **Set up your environment variables:**
+    This project uses Supabase for its backend services. You'll need to create your own Supabase project to get the necessary API keys.
 
-The application will be available at `http://localhost:5173`.
+      * Create a `.env` file in the root of the project.
+      * Add your Supabase URL and Anon Key to the `.env` file:
+        ```
+        VITE_SUPABASE_URL=YOUR_SUPABASE_URL
+        VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+        ```
 
----
+-----
 
-## 📸 Screenshots
+## 📜 Available Scripts
 
-*(Add screenshots of your application here to showcase the UI)*
+In the project directory, you can run the following commands:
 
-| Dashboard | Point of Sale |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
-|  |  |
-| **Product Management** | **Sales History** |
-|  |  |
+  * `npm run dev`
+    Runs the app in development mode. Open [http://localhost:5173](https://www.google.com/search?q=http://localhost:5173) (or the address shown in your terminal) to view it in the browser. The page will automatically reload if you make edits.
 
----
+  * `npm run build`
+    Builds the app for production to the `dist` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
-## 📄 License
+  * `npm run preview`
+    Serves the production build from the `dist` folder for you to preview locally.
 
-Distributed under the MIT License. See `LICENSE` for more information.
+  * `npm run lint`
+    Lints the project files for any code-style issues.
+
+-----
+
+Enjoy using **MedCure**\! 🌟
