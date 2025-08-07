@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -15,28 +15,28 @@ import Logo from "./Logo.jsx";
 import PropTypes from "prop-types";
 
 const Sidebar = ({ branding }) => {
-  const [expanded, setExpanded] = useState(true);
+  // **FIX**: Read initial state from localStorage, defaulting to true (expanded).
+  // This function runs only once on component mount.
+  const [expanded, setExpanded] = useState(() => {
+    const savedState = localStorage.getItem("sidebar-expanded");
+    // JSON.parse is used to convert the string from localStorage back to a boolean.
+    return savedState !== null ? JSON.parse(savedState) : true;
+  });
+
   const location = useLocation();
 
-  const menuItems = [
-    { name: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/" },
-    { name: "Management", icon: <Pill size={20} />, path: "/management" },
-    { name: "Notification", icon: <Bell size={20} />, path: "/notification" },
-    {
-      name: "Point Of Sales",
-      icon: <ShoppingCart size={20} />,
-      path: "/point-of-sales",
-    },
-    { name: "Contacts", icon: <Contact size={20} />, path: "/contacts" },
-    { name: "Archived", icon: <Archive size={20} />, path: "/archived" },
-    { name: "Settings", icon: <Settings size={20} />, path: "/settings" },
-  ];
+  // **FIX**: Use useEffect to save the state to localStorage whenever it changes.
+  useEffect(() => {
+    localStorage.setItem("sidebar-expanded", JSON.stringify(expanded));
+  }, [expanded]);
 
-  const handleLinkClick = () => {
-    if (expanded) {
-      setExpanded(false);
-    }
-  };
+  // This function is no longer needed and has been removed to prevent
+  // the sidebar from always collapsing on navigation.
+  // const handleLinkClick = () => {
+  //   if (expanded) {
+  //     setExpanded(false);
+  //   }
+  // };
 
   return (
     <aside
@@ -60,7 +60,7 @@ const Sidebar = ({ branding }) => {
             <li key={item.name} className="relative group">
               <Link
                 to={item.path}
-                onClick={handleLinkClick}
+                // onClick={handleLinkClick} // Removed this onClick handler
                 className={`w-full flex items-center p-3 rounded-lg transition-all duration-300 ease-in-out ${
                   location.pathname === item.path
                     ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
@@ -85,8 +85,6 @@ const Sidebar = ({ branding }) => {
                 </span>
               </Link>
 
-              {/* Tooltip for collapsed view with smoother transition */}
-
               {!expanded && (
                 <div className="absolute left-full top-1/2 -translate-y-1/2 rounded-md px-2 py-1 ml-4 bg-blue-100 text-blue-800 text-sm invisible opacity-0 -translate-x-3 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 whitespace-nowrap">
                   {item.name}
@@ -99,6 +97,20 @@ const Sidebar = ({ branding }) => {
     </aside>
   );
 };
+
+const menuItems = [
+  { name: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/" },
+  { name: "Management", icon: <Pill size={20} />, path: "/management" },
+  { name: "Notification", icon: <Bell size={20} />, path: "/notification" },
+  {
+    name: "Point Of Sales",
+    icon: <ShoppingCart size={20} />,
+    path: "/point-of-sales",
+  },
+  { name: "Contacts", icon: <Contact size={20} />, path: "/contacts" },
+  { name: "Archived", icon: <Archive size={20} />, path: "/archived" },
+  { name: "Settings", icon: <Settings size={20} />, path: "/settings" },
+];
 
 Sidebar.propTypes = {
   branding: PropTypes.object,
